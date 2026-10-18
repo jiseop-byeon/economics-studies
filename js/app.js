@@ -303,7 +303,7 @@ function learn() {
       return `<li><a href="#/read/${esc(a.id)}">
         <span class="toc-domain">${esc(d.name)}</span>
         <span class="toc-title">${esc(a.title)}</span>
-        <span class="toc-count">${n}${mark(a.id)}</span>
+        <span class="toc-count">용어 ${n}개${mark(a.id)}</span>
       </a></li>`;
     }).join("");
     const total = Object.keys(TREE).filter((id) => layerOf(id) === l).length;
