@@ -617,6 +617,15 @@ function setTheme(light) {
 setTheme(document.documentElement.dataset.theme === "light");
 document.getElementById("theme").addEventListener("click", () => setTheme(document.documentElement.dataset.theme !== "light"));
 
+// 맨 위 사이트 이름 옆에 마지막 갱신 시각을 적는다(js/meta.js, 커밋 때 자동으로 바뀜).
+{
+  const asof = document.getElementById("asof");
+  const up = window.SITE && window.SITE.updated;
+  if (asof && up) {
+    asof.textContent = `갱신 ${up.slice(0, 10).replace(/-/g, ".")} ${up.slice(11)}`;
+    asof.title = `이 사이트 내용이 마지막으로 바뀐 한국 시각${window.ECOS ? ` · 지금 숫자(ECOS) 조회 ${window.ECOS.fetched}` : ""}`;
+  }
+}
 addEventListener("hashchange", render);
 addEventListener("scroll", () => {
   document.querySelector(".top").classList.toggle("scrolled", scrollY > 4);

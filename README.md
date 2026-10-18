@@ -37,3 +37,11 @@ node scripts/fetch-ecos.js
 ```
 
 인증키는 저장소에 올리지 않는다. 루트의 `.ecos-key` 파일(`.gitignore`에 있음)이나 환경변수 `ECOS_KEY`에 둔다. 카드와 지표의 연결은 `scripts/fetch-ecos.js`의 `MAP`에서 고친다.
+
+## 갱신 시각
+
+맨 위 사이트 이름 옆의 "갱신 날짜·시각"은 `js/meta.js`에서 읽는다. 커밋할 때마다 `scripts/stamp.js`가 이 파일을 한국 시각으로 고친다. 새로 받은 저장소에서는 한 번만 훅을 깐다.
+
+```bash
+printf '#!/bin/sh\nnode scripts/stamp.js >/dev/null && git add js/meta.js index.html\n' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+```
