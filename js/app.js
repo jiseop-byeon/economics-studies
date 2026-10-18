@@ -179,7 +179,7 @@ function parse() {
 
 function setNav(name) {
   const map = { home: "#/", learn: "#/learn", map: "#/learn", read: "#/learn", lesson: "#/learn", terms: "#/terms", term: "#/terms", sources: "#/sources" };
-  document.querySelectorAll(".nav a").forEach((a) => {
+  document.querySelectorAll(".nav a:not(.sibling)").forEach((a) => {
     a.setAttribute("aria-current", a.getAttribute("href") === map[name] ? "page" : "false");
   });
 }

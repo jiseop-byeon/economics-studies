@@ -378,3 +378,7 @@ h1 .title-gloss { display: block; margin-left: 0; margin-top: 4px; }
   .atlas-core, .atlas-floor { grid-template-columns: 1fr; }
   .place.foreign, .place.gov { width: 100%; }
 }
+
+/* 형제 사이트 투자실무로 가는 링크 */
+.sibling { font-size: 14px; color: var(--muted); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+.sibling:hover { color: var(--text); border-color: var(--line-strong); }
