@@ -300,10 +300,12 @@ function learn() {
       const a = articleOf(d.id, l);
       const n = membersOf(d.id, l).length;
       if (!a || !n) return "";
+      // 마우스를 올리면 그 글이 다루는 용어를 글에 나오는 순서대로 보여 준다.
+      const names = [...a.html.matchAll(/<h3><a href="#\/term\/([tp]\d+)">/g)].map((m) => (node(m[1]) || {}).title).filter(Boolean);
       return `<li><a href="#/read/${esc(a.id)}">
         <span class="toc-domain">${esc(d.name)}</span>
         <span class="toc-title">${esc(a.title)}</span>
-        <span class="toc-count">용어 ${n}개${mark(a.id)}</span>
+        <span class="toc-count"><span class="toc-terms" data-tip="${esc(names.join(" · "))}">용어 ${n}개</span>${mark(a.id)}</span>
       </a></li>`;
     }).join("");
     const total = Object.keys(TREE).filter((id) => layerOf(id) === l).length;
