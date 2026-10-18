@@ -622,8 +622,13 @@ document.getElementById("theme").addEventListener("click", () => setTheme(docume
   const asof = document.getElementById("asof");
   const up = window.SITE && window.SITE.updated;
   if (asof && up) {
-    asof.textContent = `갱신 ${up.slice(0, 10).replace(/-/g, ".")} ${up.slice(11)}`;
-    asof.title = `이 사이트 내용이 마지막으로 바뀐 한국 시각${window.ECOS ? ` · 지금 숫자(ECOS) 조회 ${window.ECOS.fetched}` : ""}`;
+    asof.textContent = `갱신 ${up.slice(0, 10).replace(/-/g, ".")} ${up.slice(11)} KST`;
+    let ct = "";
+    try {
+      const d = new Date(`${up.replace(" ", "T")}:00+09:00`);
+      ct = new Intl.DateTimeFormat("ko-KR", { timeZone: "America/Chicago", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "short" }).format(d);
+    } catch (_) {}
+    asof.title = `이 사이트 내용이 마지막으로 바뀐 한국 시각${ct ? ` · 미국 중부 시각 ${ct}` : ""}${window.ECOS ? ` · 지금 숫자(ECOS) 조회 ${window.ECOS.fetched}` : ""}`;
   }
 }
 addEventListener("hashchange", render);
