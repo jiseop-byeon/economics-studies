@@ -305,7 +305,7 @@ function learn() {
       return `<li><a href="#/read/${esc(a.id)}">
         <span class="toc-domain">${esc(d.name)}</span>
         <span class="toc-title">${esc(a.title)}</span>
-        <span class="toc-count"><span class="toc-terms" data-tip="${esc(names.join(" · "))}">용어 ${n}개</span>${mark(a.id)}</span>
+        <span class="toc-count">${mark(a.id)}<span class="toc-terms" data-tip="${esc(names.join(" · "))}">용어 ${n}개</span></span>
       </a></li>`;
     }).join("");
     const total = Object.keys(TREE).filter((id) => layerOf(id) === l).length;
@@ -324,7 +324,7 @@ function learn() {
     <ol class="toc">${ls.map((l) => `<li><a href="#/lesson/${esc(l.id)}">
       <span class="toc-domain">${esc(domainName(l.domain))}</span>
       <span class="toc-title">${esc(l.title)}</span>
-      <span class="toc-count">${l.minutes}분${mark(l.id)}</span>
+      <span class="toc-count">${mark(l.id)}${l.minutes}분</span>
     </a></li>`).join("")}</ol>`;
 }
 
