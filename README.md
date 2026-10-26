@@ -45,3 +45,11 @@ node scripts/fetch-ecos.js
 ```bash
 printf '#!/bin/sh\nnode scripts/stamp.js >/dev/null && git add js/meta.js index.html\n' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
 ```
+
+## 내용 점검
+
+```bash
+node scripts/check.js book.txt
+```
+
+표제어 787개가 모두 글에 들어갔는지, 링크·태그·괄호가 맞는지 본다. `book.txt`(reference의 PDF를 `pdftotext -layout`으로 푼 파일)를 주면 『800선』 문장을 20자 넘게 그대로 옮긴 곳도 찾는다.
