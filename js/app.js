@@ -250,7 +250,7 @@ function homeStats() {
     const st = E.stats[key];
     if (!st) return "";
     const rm = id === "t154" ? rateMeeting() : null;
-    const when = rm && rm.last ? `${rm.last.short}(제${rm.last.name.match(/제(\d+)차/)?.[1] || "?"}차) 결정${rm.next ? ` · 다음 ${rm.md(rm.next)}` : ""}` : ecosCycle(st.cycle);
+    const when = rm && rm.last ? `${rm.last.short}${(rm.last.name.match(/제(\d+)차/) || [])[1] ? `(제${rm.last.name.match(/제(\d+)차/)[1]}차)` : ""} 결정${rm.next ? ` · 다음 ${rm.md(rm.next)}` : ""}` : ecosCycle(st.cycle);
     return `<a class="now-tile" href="#/term/${id}"><span class="now-label">${esc(label)}</span><strong>${esc(ecosValue(st))}</strong><span class="now-when">${esc(when)}</span></a>`;
   }).join("");
   return `<section class="now"><p class="kicker">지금 숫자</p><div class="now-grid">${tiles}</div><p class="meta">한국은행 ECOS 100대 통계지표, ${esc(E.fetched)} 조회. 칸을 누르면 그 용어로 간다.</p></section>`;
