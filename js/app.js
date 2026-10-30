@@ -632,6 +632,53 @@ document.getElementById("theme").addEventListener("click", () => setTheme(docume
     asof.title = `이 사이트 내용이 마지막으로 바뀐 한국 시각${ct ? ` · 미국 중부 시각 ${ct}` : ""}${window.ECOS ? ` · 지금 숫자(ECOS) 조회 ${window.ECOS.fetched}` : ""}`;
   }
 }
+// 한자 묶음 옆에 일본 신자체를 붙인다(js/shinjitai.js). 모양이 같으면 붙이지 않는다.
+const SHIN = window.SHINJITAI || {};
+const HAN_RUN = /[\u4e00-\u9fff]+/g;
+function shinOf(run) { return [...run].map((ch) => SHIN[ch] || ch).join(""); }
+function addShinjitai(root) {
+  if (!root) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode: (n) => {
+      const p = n.parentElement;
+      if (!p || p.closest("svg, script, style, textarea, input, .han-pair")) return NodeFilter.FILTER_REJECT;
+      HAN_RUN.lastIndex = 0;
+      return HAN_RUN.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const node of nodes) {
+    const text = node.nodeValue;
+    let last = 0, changed = false;
+    const frag = document.createDocumentFragment();
+    text.replace(HAN_RUN, (run, at) => {
+      const shin = shinOf(run);
+      if (shin === run) return run;
+      changed = true;
+      frag.appendChild(document.createTextNode(text.slice(last, at)));
+      const pair = document.createElement("span");
+      pair.className = "han-pair";
+      pair.appendChild(document.createTextNode(run));
+      const s = document.createElement("span");
+      s.className = "shin";
+      s.title = "일본 신자체";
+      s.textContent = "/" + shin;
+      pair.appendChild(s);
+      frag.appendChild(pair);
+      last = at + run.length;
+      return run;
+    });
+    if (!changed) continue;
+    frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  }
+}
+{
+  const mainEl = document.getElementById("main");
+  new MutationObserver(() => addShinjitai(mainEl)).observe(mainEl, { childList: true, subtree: true });
+}
+
 addEventListener("hashchange", render);
 addEventListener("scroll", () => {
   document.querySelector(".top").classList.toggle("scrolled", scrollY > 4);
