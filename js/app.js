@@ -482,6 +482,11 @@ function ecosBox(id) {
   return `<div class="note stat-box"><p class="note-kicker">지금 숫자</p><ul class="stat-list">${rows}</ul>${meet}<p class="meta">출처: 한국은행 경제통계시스템(ECOS) 100대 통계지표, ${esc(E.fetched)} 조회. 발표마다 바뀐다.</p></div>`;
 }
 
+// 카드의 표: tables = [{ caption, head: [...], rows: [[...], ...] }]. 글자만 담고 HTML은 쓰지 않는다.
+function cardTables(t) {
+  return (t.tables || []).map((tb) => `<div class="tbl-wrap"><table class="tbl">${tb.caption ? `<caption>${esc(tb.caption)}</caption>` : ""}<thead><tr>${tb.head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${tb.rows.map((r) => `<tr>${r.map((d) => `<td>${esc(d)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`).join("");
+}
+
 function termView(id) {
   const t = byId(id);
   if (!t) return `<h1>용어를 찾지 못했다.</h1>`;
@@ -501,6 +506,7 @@ function termView(id) {
       <h1>${esc(t.title)}${glossLine(t)}</h1>
       <p class="dek">${esc(t.one)}</p>
       ${(t.body || "").split(/(?<=다\.|요\.|까\.|죠\.|니다\.)\s+/).filter(Boolean).map((p) => `<p>${esc(p)}</p>`).join("")}
+      ${cardTables(t)}
       ${t.pillar ? `<div class="note"><p class="note-kicker">기둥 개념</p><p>이 개념은 『800선』의 표제어가 아니다. 아래의 용어들을 한데 묶으려고 이 사이트가 세운 큰 개념이며, 자세한 설명은 1층 글에 있다.</p></div>` : ""}
       ${t.watch ? `<div class="note"><p class="note-kicker">헷갈리기 쉬운 점</p><p>${esc(t.watch)}</p></div>` : ""}
       ${ecosBox(id)}

@@ -9,7 +9,7 @@ const T = window.TERMS, TR = window.TREE, A = window.ARTICLES, D = window.DOMAIN
 const dom = (id) => id[0] === "p" ? P.find((p) => p.id === id).domain : D.find((d) => d.tracks.includes(T.find((t) => t.id === id).track)).id;
 const ids = new Set(Object.keys(TR));
 const lessons = new Set(window.LESSONS.map((l) => l.id));
-const TAGS = ["h2","h3","p","ul","li","strong","a","div","figure","figcaption","svg","g","defs","marker","path","line","polyline","polygon","rect","circle","ellipse","text","tspan","title","details","summary"];
+const TAGS = ["h2","h3","p","ul","li","strong","a","div","figure","figcaption","svg","g","defs","marker","path","line","polyline","polygon","rect","circle","ellipse","text","tspan","title","details","summary","table","caption","thead","tbody","tr","th","td"];
 let err = 0;
 const e = (m) => { err++; if (err < 40) console.log(m); };
 const covered = {};
@@ -27,6 +27,7 @@ for (const a of A) {
   if (a.html.includes("<p></p>")) e("빈 문단 " + a.id);
   parens(a.html.replace(/<[^>]+>/g, ""), a.id);
 }
+for (const t of T) { for (const tb of t.tables || []) if (!tb.head || !tb.rows || tb.rows.some((r) => r.length !== tb.head.length)) e("카드 표 칸 수 " + t.id); }
 for (const t of T) for (const f of ["one", "body", "watch"]) { parens(t[f] || "", t.id + " " + f); if (/<[a-z]/.test(t[f] || "")) e("카드에 태그 " + t.id); }
 console.log("빠진 표제어", [...ids].filter((id) => !covered[id]).length);
 const bookPath = process.argv[2];

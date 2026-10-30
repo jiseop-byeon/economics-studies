@@ -98,6 +98,12 @@ button, input { font: inherit; color: inherit; }
   background: var(--icon-bg); color: var(--icon-fg);
   display: grid; place-items: center;
 }
+.tbl-wrap { overflow-x: auto; margin: 18px 0 22px; }
+.tbl { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.5; }
+.tbl caption { text-align: left; font-size: 13px; color: var(--muted); padding: 0 0 8px; }
+.tbl th, .tbl td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+.tbl th { color: var(--accent-text); font-weight: 600; white-space: nowrap; }
+.tbl tbody tr:last-child td { border-bottom: none; }
 .shin { color: var(--muted); font-weight: normal; }
 .asof {
   font-family: var(--sans); font-size: 12px; color: var(--muted); letter-spacing: 0.01em;
