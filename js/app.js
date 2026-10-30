@@ -472,11 +472,18 @@ function ecosValue(st) {
   if (u === "%") return `${f(st.value, 3)}%`;
   return `${f(st.value, 2)}${u ? " " + u : ""}`;
 }
+// 지금 숫자 상자에서 이름만으로는 뜻을 알기 어려운 통계에 붙이는 한 줄 풀이.
+const STAT_NOTE = {
+  "M1(협의통화, 평잔)": "협의통화. 현금 + 바로 꺼내 쓰는 예금(요구불예금, 수시입출식 예금). 평잔은 한 달 동안의 평균 잔액",
+  "M2(광의통화, 평잔)": "광의통화. M1 + 만기 2년 미만 정기예금·적금, CD·RP 같은 단기 금융상품 등. 평잔은 한 달 동안의 평균 잔액",
+  "Lf(평잔)": "금융기관유동성. M2 + 만기 2년 이상 정기예금·금융채, 생명보험 적립금 등. 평잔은 한 달 동안의 평균 잔액",
+  "L(말잔)": "광의유동성. Lf + 정부와 기업이 발행한 국공채, 회사채, 기업어음. 말잔은 그달 마지막 날의 잔액"
+};
 function ecosBox(id) {
   const E = window.ECOS;
   if (!E || !E.links || !E.links[id] || !E.links[id].length) return "";
   const rows = E.links[id].map((n) => E.stats[n]).filter(Boolean).map((st) =>
-    `<li><span class="stat-name">${esc(st.name)}</span><strong>${esc(ecosValue(st))}</strong><span class="stat-when">${esc(ecosCycle(st.cycle))}</span></li>`).join("");
+    `<li><span class="stat-name">${esc(st.name)}</span><strong>${esc(ecosValue(st))}</strong><span class="stat-when">${esc(ecosCycle(st.cycle))}</span>${STAT_NOTE[st.name] ? `<span class="stat-note">${esc(STAT_NOTE[st.name])}</span>` : ""}</li>`).join("");
   const rm = id === "t154" ? rateMeeting() : null;
   const meet = rm && rm.last ? `<p class="meeting-line">최근 결정: ${esc(rm.last.name)}, ${esc(rm.last.date.replace(/-/g, "."))}, ${esc(rm.last.result)}.${rm.next ? ` 다음 통화정책방향 결정 회의는 ${esc(rm.next.replace(/-/g, "."))} 예정이다.` : ""}</p>` : "";
   return `<div class="note stat-box"><p class="note-kicker">지금 숫자</p><ul class="stat-list">${rows}</ul>${meet}<p class="meta">출처: 한국은행 경제통계시스템(ECOS) 100대 통계지표, ${esc(E.fetched)} 조회. 발표마다 바뀐다.</p></div>`;
