@@ -496,7 +496,7 @@ function termView(id) {
   const lesson = t.pillar ? null : lessonForTerm(t);
   return `
     <article class="lesson">
-      <p class="kicker">${layerTag(id)}${t.pillar ? " · 기둥 개념" : ""}</p>
+      <p class="kicker">${layerTag(id)}${t.pillar ? " · 기둥 개념" : ""}${t.extra ? " · 『800선』 밖에서 더한 용어" : ""}</p>
       ${crumbs.length ? `<p class="crumbs">${crumbs.join(" › ")} › <span>${esc(t.title)}</span></p>` : ""}
       <h1>${esc(t.title)}${glossLine(t)}</h1>
       <p class="dek">${esc(t.one)}</p>
@@ -528,7 +528,7 @@ function sources() {
       ${body}
       <div class="note">
         <p class="note-kicker">학습 범위</p>
-        <p>표제어 787개는 한국은행이 2026년 1월에 발간한 『경제금융용어 800선』의 표제어이다. 책 한 권으로 세면 800선이고, 표제어 가운데 둘을 슬래시로 묶은 항목이 있어 이 사이트의 카드 수는 787이다. 기둥 개념 ${pillars().length}개는 층을 세우려고 이 사이트가 더한 개념이다. 원문은 한국은행 경제교육 자료와 정부간행물 안내에서 볼 수 있다. 이 사이트는 그 해설을 옮기지 않았다.</p>
+        <p>표제어 787개는 한국은행이 2026년 1월에 발간한 『경제금융용어 800선』의 표제어이다. 책 한 권으로 세면 800선이고, 표제어 가운데 둘을 슬래시로 묶은 항목이 있어 표제어 카드는 787장이다. 여기에 『800선』의 표제어는 아니지만 설명에 꼭 필요해 이 사이트가 더한 용어 카드 ${terms().filter((t) => t.extra).length}장이 있다. 기둥 개념 ${pillars().length}개는 층을 세우려고 이 사이트가 더한 개념이다. 원문은 한국은행 경제교육 자료와 정부간행물 안내에서 볼 수 있다. 이 사이트는 그 해설을 옮기지 않았다.</p>
       </div>
     </article>`;
 }
