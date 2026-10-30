@@ -246,7 +246,8 @@ h3 { font-size: 22px; margin: 26px 0 8px; }
 .qa[open] summary::after { content: "\2212"; }
 .qa > p, .qa > div { margin-top: 0; }
 .qa > :last-child { margin-bottom: 16px; }
-.qa-group { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; color: var(--accent-text); margin: 28px 0 6px; }
+.qa-group { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; color: var(--accent-text); margin: 40px 0 0; padding: 0 0 8px; border-bottom: 2px solid var(--accent-text); }
+.qa-group + .qa { border-top: 0; }
 .read-log { flex-basis: 100%; margin: 0; }
 .steps { margin: 8px 0; padding-left: 1.2em; }
 .result { font-family: var(--serif); font-size: 22px; margin: 8px 0 0; }
