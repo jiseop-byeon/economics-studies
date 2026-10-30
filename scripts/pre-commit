@@ -1,0 +1,4 @@
+#!/bin/sh
+# 커밋 전에 데이터 파일을 검사하고(scripts/check.js), 통과하면 사이트 갱신 시각을 적는다(scripts/stamp.js).
+node scripts/check.js >/dev/null 2>&1 || { echo "scripts/check.js 실패: 커밋을 멈춘다"; node scripts/check.js | tail -5; exit 1; }
+node scripts/stamp.js >/dev/null && git add js/meta.js index.html
