@@ -638,7 +638,7 @@ document.getElementById("theme").addEventListener("click", () => setTheme(docume
     asof.title = `이 사이트 내용이 마지막으로 바뀐 한국 시각${ct ? ` · 미국 중부 시각 ${ct}` : ""}${window.ECOS ? ` · 지금 숫자(ECOS) 조회 ${window.ECOS.fetched}` : ""}`;
   }
 }
-// 한자 묶음 옆에 일본 신자체를 붙인다(js/shinjitai.js). 모양이 같으면 붙이지 않는다.
+// 한자 묶음 옆에 일본에서 쓰는 한자를 붙인다(js/shinjitai.js). 모양이 같으면 붙이지 않는다.
 const SHIN = window.SHINJITAI || {};
 const HAN_RUN = /[\u4e00-\u9fff]+/g;
 function shinOf(run) { return [...run].map((ch) => SHIN[ch] || ch).join(""); }
@@ -668,7 +668,7 @@ function addShinjitai(root) {
       pair.appendChild(document.createTextNode(run));
       const s = document.createElement("span");
       s.className = "shin";
-      s.title = "일본 신자체";
+      s.title = "일본 표기";
       s.textContent = "/" + shin;
       pair.appendChild(s);
       frag.appendChild(pair);
