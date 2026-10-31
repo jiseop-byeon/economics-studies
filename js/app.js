@@ -37,6 +37,15 @@ function esc(s) {
   }[c]));
 }
 
+// 카드 본문은 평문이다. [[t590|중앙거래당사자]]만 그 용어 카드로 가는 링크로 바꾼다.
+function escLinks(s) {
+  return esc(s).replace(/\[\[(t\d+)\|([^\]]+)\]\]/g, (m, id, label) => byId(id) ? `<a href="#/term/${id}">${label}</a>` : label);
+}
+
+function plainLinks(s) {
+  return String(s ?? "").replace(/\[\[t\d+\|([^\]]+)\]\]/g, "$1");
+}
+
 function glossText(t) {
   return [t.hanja, t.en].filter(Boolean).map(esc).join(" · ");
 }
@@ -441,7 +450,7 @@ function paintTerms(domain, layer) {
     if (domain && domainOf(t.id) !== domain) return false;
     if (layer && layerOf(t.id) !== layer) return false;
     if (!q) return true;
-    return (t.title + " " + (t.hanja || "") + " " + (t.en || "") + t.one + (t.body || "")).toLowerCase().includes(q);
+    return (t.title + " " + (t.hanja || "") + " " + (t.en || "") + t.one + plainLinks(t.body)).toLowerCase().includes(q);
   }).sort((a, b) => layerOf(a.id) - layerOf(b.id));
   const host = document.getElementById("list");
   if (!host) return;
@@ -512,10 +521,10 @@ function termView(id) {
       ${crumbs.length ? `<p class="crumbs">${crumbs.join(" › ")} › <span>${esc(t.title)}</span></p>` : ""}
       <h1>${esc(t.title)}${glossLine(t)}</h1>
       <p class="dek">${esc(t.one)}</p>
-      ${(t.body || "").split(/(?<=다\.|요\.|까\.|죠\.|니다\.)\s+/).filter(Boolean).map((p) => `<p>${esc(p)}</p>`).join("")}
+      ${(t.body || "").split(/(?<=다\.|요\.|까\.|죠\.|니다\.)\s+/).filter(Boolean).map((p) => `<p>${escLinks(p)}</p>`).join("")}
       ${cardTables(t)}
       ${t.pillar ? `<div class="note"><p class="note-kicker">기둥 개념</p><p>이 개념은 『800선』의 표제어가 아니다. 아래의 용어들을 한데 묶으려고 이 사이트가 세운 큰 개념이며, 자세한 설명은 1층 글에 있다.</p></div>` : ""}
-      ${t.watch ? `<div class="note"><p class="note-kicker">헷갈리기 쉬운 점</p><p>${esc(t.watch)}</p></div>` : ""}
+      ${t.watch ? `<div class="note"><p class="note-kicker">헷갈리기 쉬운 점</p><p>${escLinks(t.watch)}</p></div>` : ""}
       ${ecosBox(id)}
       ${t.page ? `<p class="source-line">원문: 한국은행 『경제금융용어 800선』(2026) ${t.page}쪽 · <a href="${BOOK_PDF}#page=${t.page + PDF_OFFSET}" target="_blank" rel="noopener">PDF에서 이 쪽 열기</a> · <a href="${BOOK_PAGE}" target="_blank" rel="noopener">한국은행 자료실</a></p>` : ""}
       ${kids.length ? `<h2>더 깊이</h2><div class="chips">${kids.map((k) => `<a class="chip" href="#/term/${esc(k)}">${esc(node(k)?.title || k)} <small>${layerOf(k)}층</small></a>`).join("")}</div>` : ""}
