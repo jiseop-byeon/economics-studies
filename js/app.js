@@ -1,4 +1,9 @@
+// 읽음 기록(회독 날짜)을 브라우저에 저장하는 이름이다. 바꾸면 그동안의 기록이 모두 안 보이게 되므로 절대 바꾸지 않는다.
+// 기록 모양({ lessons: [...], readAt: { id: [날짜...] } })을 바꿔야 하면 load()에서 예전 모양을 새 모양으로 옮겨 주고, 지우지 않는다.
+// scripts/check.js가 이 줄이 그대로인지 검사한다.
 const KEY = "cheoeum-v1";
+// 저장 공간이 모자랄 때 브라우저가 이 사이트의 기록을 먼저 지우지 않도록 요청한다(사용자가 직접 지우는 것은 막지 못한다).
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (_) {}
 
 function load() {
   try {

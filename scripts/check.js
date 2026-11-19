@@ -29,6 +29,8 @@ for (const a of A) {
 }
 for (const t of T) { for (const tb of t.tables || []) if (!tb.head || !tb.rows || tb.rows.some((r) => r.length !== tb.head.length)) e("카드 표 칸 수 " + t.id); }
 for (const t of T) for (const f of ["one", "body", "watch"]) { parens(t[f] || "", t.id + " " + f); if (/<[a-z]/.test(t[f] || "")) e("카드에 태그 " + t.id); }
+// 읽음 기록 저장 이름이 바뀌면 그동안의 회독 기록이 사라진 것처럼 보인다. 이름이 그대로인지 확인한다.
+if (!/^const KEY = "cheoeum-v1";$/m.test(fs.readFileSync(path.join(ROOT, "js", "app.js"), "utf8"))) e("읽음 기록 저장 이름(KEY = \"cheoeum-v1\")이 바뀌었다");
 console.log("빠진 표제어", [...ids].filter((id) => !covered[id]).length);
 const bookPath = process.argv[2];
 if (bookPath && fs.existsSync(bookPath)) {
