@@ -689,6 +689,7 @@ function addShinjitai(root) {
       pair.appendChild(document.createTextNode(run));
       const s = document.createElement("span");
       s.className = "shin";
+      s.lang = "ja";
       s.title = "일본 표기";
       s.textContent = "/" + shin;
       pair.appendChild(s);
