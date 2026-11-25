@@ -24,9 +24,11 @@
   --icon-alt: #eef0f3;
   --fig2: #7fb6e0;
   --fig2-soft: #1f3550;
-  --sans: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-  --serif: "Nanum Myeongjo", "Apple SD Gothic Neo", serif;
-  --mono: "IBM Plex Sans KR", "Pretendard", sans-serif;
+  /* 한자는 한국 글꼴(맥 Apple SD Gothic Neo, 윈도 맑은 고딕, 안드로이드 Noto CJK KR)로 그린다. 실 사(糸) 변 아래를 小 모양으로 쓰는 정자 활자 모양이다.
+     한국 글꼴에 없는 글자(強·畫·圜·祕 등)는 중국·대만 글꼴(점 셋 糹 모양)로 넘어가지 않도록 일본 글꼴을 그다음에 둔다. */
+  --sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --serif: "Nanum Myeongjo", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Serif KR", "Noto Serif CJK KR", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --mono: "IBM Plex Sans KR", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR", "Hiragino Sans", "Yu Gothic", sans-serif;
   color-scheme: dark;
 }
 :root[data-theme="light"] {
