@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "site", "runtimeExecutable": "/Users/jiseopbyeon/.local/node/bin/node", "runtimeArgs": ["/Users/jiseopbyeon/Documents/2026/building-websites/economics-studies/scripts/serve.js", "8765"], "port": 8765 }
+  ]
+}

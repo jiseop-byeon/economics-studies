@@ -36,6 +36,40 @@ function readDate(s, id, long) {
 }
 function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (_) {} }
 
+// 책갈피는 회독 기록(KEY)과 다른 이름에 따로 저장한다. 책갈피를 꽂거나 지워도 회독 기록은 건드리지 않는다.
+// 모양: { "read/finance-2": { key: "t629" 또는 소제목 글자, label: "소제목", title: "글 제목", date: "YYYY-MM-DD" } } (페이지마다 하나)
+const BM_KEY = "cheoeum-bookmark-v1";
+function loadBm() {
+  try {
+    const o = JSON.parse(localStorage.getItem(BM_KEY));
+    if (o && typeof o === "object" && !Array.isArray(o)) return o;
+  } catch (_) {}
+  return {};
+}
+function saveBm(o) { try { localStorage.setItem(BM_KEY, JSON.stringify(o)); } catch (_) {} }
+const BM_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>`;
+// 글과 강의의 소제목(h2, h3)마다 책갈피 단추를 단다. 열쇠는 h3이면 용어 번호, h2이면 소제목 글자라서 글에 문답이 늘어도 자리가 어긋나지 않는다.
+function withBookmarks(html) {
+  return html.replace(/<(h[23])>([\s\S]*?)<\/\1>/g, (m, tag, inner) => {
+    const id = inner.match(/^<a href="#\/term\/([tp]\d+)">/);
+    const label = inner.replace(/<[^>]+>/g, "").trim();
+    const key = id ? id[1] : label;
+    const name = id ? inner.replace(/^<a [^>]*>([^<]*)<\/a>[\s\S]*$/, "$1") : label;
+    return `<${tag} class="bm-head" data-bm="${esc(key)}" data-bm-label="${esc(name)}">${inner}<button type="button" class="bm-btn" data-bm="${esc(key)}" aria-pressed="false" aria-label="여기에 책갈피 꽂기" title="여기에 책갈피 꽂기">${BM_ICON}</button></${tag}>`;
+  });
+}
+function bmBar(page) {
+  const b = loadBm()[page];
+  if (!b) return `<div class="bm-bar" id="bm-bar" hidden></div>`;
+  return `<div class="bm-bar" id="bm-bar"><span class="bm-mark">${BM_ICON}</span><span>책갈피 · <strong>${esc(b.label)}</strong>에서 멈췄다 <small>${esc(fmtDate(b.date))}</small></span><button type="button" class="btn-quiet bm-go" id="bm-go">그리로 가기</button><button type="button" class="btn-quiet bm-del" id="bm-del">책갈피 빼기</button></div>`;
+}
+function bmList() {
+  const o = loadBm();
+  const items = Object.entries(o).sort((x, y) => (y[1].date || "").localeCompare(x[1].date || ""));
+  if (!items.length) return "";
+  return `<section class="bm-list"><p class="kicker">책갈피</p><ul>${items.map(([page, b]) => `<li><a href="#/${esc(page)}/bm"><span class="bm-mark">${BM_ICON}</span><span><strong>${esc(b.label)}</strong><span class="meta"> · ${esc(b.title)} · ${esc(fmtDate(b.date))}</span></span></a></li>`).join("")}</ul></section>`;
+}
+
 function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -188,7 +222,7 @@ const layerTag = (id) => `${layerOf(id)}층 · ${esc(domainName(domainOf(id)))}`
 function parse() {
   const raw = (location.hash || "#/").replace(/^#/, "");
   const parts = raw.split("/").filter(Boolean);
-  return { name: parts[0] || "home", arg: parts[1] ? decodeURIComponent(parts[1]) : "" };
+  return { name: parts[0] || "home", arg: parts[1] ? decodeURIComponent(parts[1]) : "", extra: parts[2] || "" };
 }
 
 function setNav(name) {
@@ -285,6 +319,7 @@ function home() {
         ${next ? `<a class="btn" href="#/read/${esc(next.id)}">${started ? "이어서 읽기" : "1층부터 읽기"}</a>` : ""}
         <a class="btn-quiet" href="#/learn">전체 목록</a>
       </div>
+      ${bmList()}
       <ol class="ladder">
         ${[1, 2, 3, 4].map((l) => {
           const f = firstOf(l);
@@ -389,7 +424,8 @@ function articleView(id) {
         ${up ? `<a class="chip" href="#/read/${esc(up.id)}">↑ ${up.layer}층 · ${esc(domainName(up.domain))}</a>` : ""}
         ${down ? `<a class="chip" href="#/read/${esc(down.id)}">↓ ${down.layer}층 · ${esc(domainName(down.domain))}</a>` : ""}
       </div>
-      <div class="article">${withGloss(a.html)}</div>
+      ${bmBar("read/" + a.id)}
+      <div class="article">${withBookmarks(withGloss(a.html))}</div>
       ${ls.length ? `<h2>계산으로 다시 보기</h2><div class="chips">${ls.map((l) => `<a class="chip" href="#/lesson/${esc(l.id)}">${esc(l.no)} ${esc(l.title)}</a>`).join("")}</div>` : ""}
       <div class="row">${markButton(a.id, s.lessons.includes(a.id))}</div>
       <div class="pager">
@@ -417,7 +453,8 @@ function lessonView(id) {
       <h1>${esc(l.title)}</h1>
       <p class="dek">${esc(l.dek)}</p>
       ${l.why ? `<p class="bridge"><span class="bridge-kicker">이 강의가 다루는 것</span>${esc(l.why)}</p>` : ""}
-      ${l.html}
+      ${bmBar("lesson/" + l.id)}
+      ${withBookmarks(l.html)}
       ${cores ? `<h2>이 강의의 용어</h2><div class="chips">${cores}</div>` : ""}
       ${art ? `<p class="meta"><a href="#/read/${esc(art.id)}">2층 · ${esc(domainName(l.domain))} 글로 돌아가기</a></p>` : ""}
       <div class="row">${markButton(l.id, s.lessons.includes(l.id))}</div>
@@ -560,8 +597,48 @@ function sources() {
     </article>`;
 }
 
+function bmTarget(key) {
+  return [...document.querySelectorAll("#main .bm-head")].find((h) => h.dataset.bm === key);
+}
+function paintBm(page) {
+  const b = loadBm()[page];
+  document.querySelectorAll("#main .bm-btn").forEach((btn) => {
+    const on = !!b && btn.dataset.bm === b.key;
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.setAttribute("aria-label", on ? "책갈피 빼기" : "여기에 책갈피 꽂기");
+    btn.title = on ? "책갈피 빼기" : "여기에 책갈피 꽂기";
+  });
+  const bar = document.getElementById("bm-bar");
+  if (bar) {
+    const fresh = document.createElement("div");
+    fresh.innerHTML = bmBar(page);
+    bar.replaceWith(fresh.firstElementChild);
+    wireBmBar(page);
+  }
+}
+function goBm(page) {
+  const b = loadBm()[page];
+  const h = b && bmTarget(b.key);
+  if (!h) return false;
+  // 한자 옆 신자체가 그려지며 위쪽 글이 늘어나 자리가 밀리므로, 잠시 뒤 두어 번 더 맞춘다.
+  const go = () => h.scrollIntoView({ block: "start" });
+  go();
+  requestAnimationFrame(go);
+  setTimeout(go, 150);
+  setTimeout(go, 600);
+  // 새로 열 때는 브라우저가 다 읽은 뒤 맨 위로 되돌리므로, 다 읽은 뒤에도 한 번 더 맞춘다.
+  if (document.readyState !== "complete") addEventListener("load", () => { go(); setTimeout(go, 150); }, { once: true });
+  return true;
+}
+function wireBmBar(page) {
+  const go = document.getElementById("bm-go");
+  if (go) go.onclick = () => { if (!goBm(page)) alert("책갈피를 꽂은 소제목을 이 글에서 찾지 못했다."); };
+  const del = document.getElementById("bm-del");
+  if (del) del.onclick = () => { const o = loadBm(); delete o[page]; saveBm(o); paintBm(page); };
+}
+
 function render() {
-  const { name, arg } = parse();
+  const { name, arg, extra } = parse();
   setNav(name);
   const main = document.getElementById("main");
   if (name === "home") main.innerHTML = home();
@@ -604,6 +681,25 @@ function render() {
     save(s);
     render();
   };
+  const page = (name === "read" || name === "lesson") ? `${name}/${arg}` : "";
+  if (page) {
+    main.querySelectorAll(".bm-btn").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        const o = loadBm();
+        const key = btn.dataset.bm;
+        if (o[page] && o[page].key === key) delete o[page];
+        else {
+          const h = btn.closest(".bm-head");
+          const t = main.querySelector("h1");
+          o[page] = { key, label: h ? h.dataset.bmLabel : key, title: t ? t.textContent.trim() : page, date: today() };
+        }
+        saveBm(o);
+        paintBm(page);
+      };
+    });
+    paintBm(page);
+  }
   const hs = document.getElementById("home-search");
   if (hs) hs.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -630,7 +726,7 @@ function render() {
     wire("layers", "layer", (v) => { layer = Number(v) || 0; });
     go();
   }
-  window.scrollTo(0, 0);
+  if (!(page && extra === "bm" && goBm(page))) window.scrollTo(0, 0);
 }
 
 function setTheme(light) {
