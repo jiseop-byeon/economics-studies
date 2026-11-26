@@ -542,7 +542,7 @@ function ecosBox(id) {
 
 // 카드의 표: tables = [{ caption, head: [...], rows: [[...], ...] }]. 글자만 담고 HTML은 쓰지 않는다.
 function cardTables(t) {
-  return (t.tables || []).map((tb) => `<div class="tbl-wrap"><table class="tbl">${tb.caption ? `<caption>${esc(tb.caption)}</caption>` : ""}<thead><tr>${tb.head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${tb.rows.map((r) => `<tr>${r.map((d) => `<td>${esc(d)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`).join("");
+  return (t.tables || []).map((tb) => `<div class="tbl-wrap"><table class="tbl">${tb.caption ? `<caption>${esc(tb.caption)}</caption>` : ""}<thead><tr>${tb.head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${tb.rows.map((r) => `<tr>${r.map((d) => `<td>${escLinks(d)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`).join("");
 }
 
 function termView(id) {
